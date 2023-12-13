@@ -14,13 +14,15 @@ func Unpack(str string) (string, error) {
 		return "", ErrInvalidString
 	}
 
+	if unicode.IsDigit(rune(str[0])) {
+		return "", ErrInvalidString
+	}
+
 	var prev rune
 	var builder strings.Builder
 
 	for i, char := range str {
-		if unicode.IsDigit(char) && prev == 0 {
-			return "", ErrInvalidString
-		} else if unicode.IsDigit(char) {
+		if unicode.IsDigit(char) {
 			if unicode.IsDigit(rune(str[i-1])) {
 				return "", ErrInvalidString
 			}
