@@ -14,6 +14,10 @@ func Unpack(str string) (string, error) {
 		return "", ErrInvalidString
 	}
 
+	if len(str) == 0 {
+		return str, nil
+	}
+
 	if unicode.IsDigit(rune(str[0])) {
 		return "", ErrInvalidString
 	}
