@@ -22,7 +22,7 @@ func Top10(s string) []string {
 	}
 
 	// Разделяем строку на слова при этом удаляем все лишние пробелы по решулярке
-	r := regexp.MustCompile("\\s+")
+	r := regexp.MustCompile(`\s+`)
 	words := strings.Split(r.ReplaceAllString(s, " "), " ")
 
 	// Мапа для подсчета кол-ва каждого слова
