@@ -43,7 +43,7 @@ func Top10(s string) []string {
 	})
 
 	// Текущее кол-во повторений (при первом проходе максимальное)
-	var currentRepeat int = pairList[0].Value
+	currentRepeat := pairList[0].Value
 
 	// Слайс для слов с одинаковым кол-вом повторений
 	keys := make([]string, 0, 10)
