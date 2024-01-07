@@ -78,7 +78,7 @@ func (l *list) PushBack(v interface{}) *ListItem {
 	return l.last
 }
 
-// Remove Удалить элемент из списка
+// Remove Удалить элемент из списка.
 func (l *list) Remove(i *ListItem) {
 	prev := i.Prev
 	next := i.Next
