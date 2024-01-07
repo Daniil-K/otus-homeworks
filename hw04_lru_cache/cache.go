@@ -22,7 +22,7 @@ func NewCache(capacity int) Cache {
 	}
 }
 
-// Set Добавить значение в кэш по ключу
+// Set Добавить значение в кэш по ключу.
 func (cache *lruCache) Set(key Key, value interface{}) bool {
 	item, ok := cache.items[key]
 
@@ -49,7 +49,7 @@ func (cache *lruCache) Set(key Key, value interface{}) bool {
 	return false
 }
 
-// Get Получить значение из кэша по ключу
+// Get Получить значение из кэша по ключу.
 func (cache *lruCache) Get(key Key) (interface{}, bool) {
 	item, ok := cache.items[key]
 
@@ -61,7 +61,7 @@ func (cache *lruCache) Get(key Key) (interface{}, bool) {
 	return nil, false
 }
 
-// Clear Очистить кэш
+// Clear Очистить кэш.
 func (cache *lruCache) Clear() {
 	cache.queue = NewList()
 	cache.items = make(map[Key]*ListItem, cache.capacity)
