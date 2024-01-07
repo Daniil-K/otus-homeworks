@@ -22,27 +22,27 @@ type list struct {
 	last  *ListItem
 }
 
-// NewList Создать новый список
+// NewList Создать новый список.
 func NewList() List {
 	return new(list)
 }
 
-// Len Получить длину списка
+// Len Получить длину списка.
 func (l list) Len() int {
 	return l.len
 }
 
-// Front Получить первый элемент списка
+// Front Получить первый элемент списка.
 func (l list) Front() *ListItem {
 	return l.first
 }
 
-// Back Получить последний элемент списка
+// Back Получить последний элемент списка.
 func (l list) Back() *ListItem {
 	return l.last
 }
 
-// PushFront Добавить элемент в начало списка
+// PushFront Добавить элемент в начало списка.
 func (l *list) PushFront(v interface{}) *ListItem {
 	item := ListItem{Value: v}
 	temp := l.first
@@ -60,7 +60,7 @@ func (l *list) PushFront(v interface{}) *ListItem {
 	return l.first
 }
 
-// PushBack Добавить элемент в конец списка
+// PushBack Добавить элемент в конец списка.
 func (l *list) PushBack(v interface{}) *ListItem {
 	item := ListItem{Value: v}
 	temp := l.last
@@ -101,26 +101,26 @@ func (l *list) Remove(i *ListItem) {
 	i.Next = nil
 }
 
-// MoveToFront Переместить элемент в начало списка
+// MoveToFront Переместить элемент в начало списка.
 func (l *list) MoveToFront(i *ListItem) {
 	if i == l.Front() {
 		return
 	}
 
-	prev := i.Prev // Предыдущий перемещаемого
-	next := i.Next // Следующий перемещаемого
+	prev := i.Prev // Предыдущий перемещаемого.
+	next := i.Next // Следующий перемещаемого.
 
-	// Выстраиваем связь предыдущий перемещаемого -> следующий перемещаемого
+	// Выстраиваем связь предыдущий перемещаемого -> следующий перемещаемого.
 	if prev != nil {
 		prev.Next = next
 	}
 
-	// Выстраиваем связь следующий перемещаемого <- предыдущий перемещаемого
+	// Выстраиваем связь следующий перемещаемого <- предыдущий перемещаемого.
 	if next != nil {
 		next.Prev = prev
 	}
 
-	// Перемещаем последний элемент
+	// Перемещаем последний элемент.
 	if prev != nil && next == nil {
 		l.last = prev
 	}
@@ -128,7 +128,7 @@ func (l *list) MoveToFront(i *ListItem) {
 	i.Next = nil
 	i.Prev = nil
 
-	first := l.first // Первый элемент списка
+	first := l.first
 	first.Prev = i
 	i.Next = first
 	l.first = i
