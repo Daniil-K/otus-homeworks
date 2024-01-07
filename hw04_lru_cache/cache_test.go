@@ -53,16 +53,16 @@ func TestCache(t *testing.T) {
 	t.Run("pushing out capacity", func(t *testing.T) {
 		c := NewCache(3)
 
-		wasInCache := c.Set("aaa", 100) // [aaa]
+		wasInCache := c.Set("aaa", 100) // [aaa].
 		require.False(t, wasInCache)
 
-		wasInCache = c.Set("bbb", 200) // [bbb, aaa]
+		wasInCache = c.Set("bbb", 200) // [bbb, aaa].
 		require.False(t, wasInCache)
 
-		wasInCache = c.Set("ccc", 300) // [ccc, bbb, aaa]
+		wasInCache = c.Set("ccc", 300) // [ccc, bbb, aaa].
 		require.False(t, wasInCache)
 
-		wasInCache = c.Set("ddd", 400) // [ddd, ccc, bbb]
+		wasInCache = c.Set("ddd", 400) // [ddd, ccc, bbb].
 		require.False(t, wasInCache)
 
 		_, ok := c.Get("aaa")
@@ -73,22 +73,22 @@ func TestCache(t *testing.T) {
 	t.Run("pushing out time using", func(t *testing.T) {
 		c := NewCache(3)
 
-		wasInCache := c.Set("aaa", 100) // [aaa]
+		wasInCache := c.Set("aaa", 100) // [aaa].
 		require.False(t, wasInCache)
 
-		wasInCache = c.Set("bbb", 200) // [bbb, aaa]
+		wasInCache = c.Set("bbb", 200) // [bbb, aaa].
 		require.False(t, wasInCache)
 
-		wasInCache = c.Set("ccc", 300) // [ccc, bbb, aaa]
+		wasInCache = c.Set("ccc", 300) // [ccc, bbb, aaa].
 		require.False(t, wasInCache)
 
-		_, ok := c.Get("aaa") // [aaa, ccc, bbb]
+		_, ok := c.Get("aaa") // [aaa, ccc, bbb].
 		require.True(t, ok)
 
-		wasInCache = c.Set("bbb", 400) // [bbb, aaa, ccc]
+		wasInCache = c.Set("bbb", 400) // [bbb, aaa, ccc].
 		require.True(t, wasInCache)
 
-		wasInCache = c.Set("ddd", 500) // [ddd, bbb, aaa]
+		wasInCache = c.Set("ddd", 500) // [ddd, bbb, aaa].
 		require.False(t, wasInCache)
 
 		_, ok = c.Get("ccc")
