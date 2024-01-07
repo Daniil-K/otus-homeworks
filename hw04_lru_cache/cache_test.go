@@ -49,7 +49,7 @@ func TestCache(t *testing.T) {
 		require.Nil(t, val)
 	})
 
-	// Логика выталкивания из-за размера очереди
+	// Логика выталкивания из-за размера очереди.
 	t.Run("pushing out capacity", func(t *testing.T) {
 		c := NewCache(3)
 
@@ -69,7 +69,7 @@ func TestCache(t *testing.T) {
 		require.False(t, ok)
 	})
 
-	// Логика выталкивания давно используемых элементов
+	// Логика выталкивания давно используемых элементов.
 	t.Run("pushing out time using", func(t *testing.T) {
 		c := NewCache(3)
 
