@@ -49,8 +49,50 @@ func TestCache(t *testing.T) {
 		require.Nil(t, val)
 	})
 
-	t.Run("purge logic", func(t *testing.T) {
-		// Write me
+	// Логика выталкивания из-за размера очереди.
+	t.Run("pushing out capacity", func(t *testing.T) {
+		c := NewCache(3)
+
+		wasInCache := c.Set("aaa", 100) // [aaa].
+		require.False(t, wasInCache)
+
+		wasInCache = c.Set("bbb", 200) // [bbb, aaa].
+		require.False(t, wasInCache)
+
+		wasInCache = c.Set("ccc", 300) // [ccc, bbb, aaa].
+		require.False(t, wasInCache)
+
+		wasInCache = c.Set("ddd", 400) // [ddd, ccc, bbb].
+		require.False(t, wasInCache)
+
+		_, ok := c.Get("aaa")
+		require.False(t, ok)
+	})
+
+	// Логика выталкивания давно используемых элементов.
+	t.Run("pushing out time using", func(t *testing.T) {
+		c := NewCache(3)
+
+		wasInCache := c.Set("aaa", 100) // [aaa].
+		require.False(t, wasInCache)
+
+		wasInCache = c.Set("bbb", 200) // [bbb, aaa].
+		require.False(t, wasInCache)
+
+		wasInCache = c.Set("ccc", 300) // [ccc, bbb, aaa].
+		require.False(t, wasInCache)
+
+		_, ok := c.Get("aaa") // [aaa, ccc, bbb].
+		require.True(t, ok)
+
+		wasInCache = c.Set("bbb", 400) // [bbb, aaa, ccc].
+		require.True(t, wasInCache)
+
+		wasInCache = c.Set("ddd", 500) // [ddd, bbb, aaa].
+		require.False(t, wasInCache)
+
+		_, ok = c.Get("ccc")
+		require.False(t, ok)
 	})
 }
 
