@@ -48,7 +48,6 @@ func worker(wg *sync.WaitGroup, queue chan Task, errorsCount *int32, errorMaxCou
 
 	for task := range queue {
 		err := task()
-
 		if err != nil {
 			atomic.AddInt32(errorsCount, 1)
 		}
