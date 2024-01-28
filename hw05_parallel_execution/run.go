@@ -7,11 +7,16 @@ import (
 )
 
 var ErrErrorsLimitExceeded = errors.New("errors limit exceeded")
+var ErrCountWorkersNull = errors.New("count of workers not equal zero")
 
 type Task func() error
 
 // Run starts tasks in n goroutines and stops its work when receiving m errors from tasks.
 func Run(tasks []Task, n, m int) error {
+	if n <= 0 {
+		return ErrCountWorkersNull
+	}
+
 	if m < 1 {
 		m = 1
 	}

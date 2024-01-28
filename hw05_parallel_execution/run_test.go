@@ -131,6 +131,28 @@ func TestRunComplete(t *testing.T) {
 	})
 }
 
+func TestZeroWorker(t *testing.T) {
+	defer goleak.VerifyNone(t)
+	t.Run("zero worker", func(t *testing.T) {
+		tasksCount := 5
+		tasks := make([]Task, 0)
+		var runTasksCount int32
+		for i := 0; i < tasksCount; i++ {
+			if i%4 == 0 {
+				tasks = append(tasks, makeErrorTask(&runTasksCount))
+			} else {
+				tasks = append(tasks, makeSuccessTask(&runTasksCount))
+			}
+		}
+
+		workersCount := 0
+		maxErrorsCount := 1
+		err := Run(tasks, workersCount, maxErrorsCount)
+
+		require.Truef(t, errors.Is(err, ErrCountWorkersNull), "actual err - %v", err)
+	})
+}
+
 func makeSuccessTask(runTasksCount *int32) func() error {
 	taskSleep := time.Millisecond * 10
 
