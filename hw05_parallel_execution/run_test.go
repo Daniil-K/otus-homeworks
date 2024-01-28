@@ -85,7 +85,7 @@ func TestRunFirstTaskWithError(t *testing.T) {
 		maxErrorsCount := 1
 		err := Run(tasks, workersCount, maxErrorsCount)
 
-		require.Truef(t, errors.Is(err, ErrErrorsLimitExceeded), "actual err - %v", err)
+		require.ErrorIs(t, err, ErrErrorsLimitExceeded, "actual err - %v")
 		require.Equal(t, runTasksCount, int32(1), "not all tasks were completed")
 	})
 
@@ -103,7 +103,7 @@ func TestRunFirstTaskWithError(t *testing.T) {
 		maxErrorsCount := 1
 		err := Run(tasks, workersCount, maxErrorsCount)
 
-		require.Truef(t, errors.Is(err, ErrErrorsLimitExceeded), "actual err - %v", err)
+		require.ErrorIs(t, err, ErrErrorsLimitExceeded, "actual err - %v")
 		require.LessOrEqual(t, runTasksCount, int32(1+workersCount*2), "not all tasks were completed")
 	})
 }
@@ -126,7 +126,7 @@ func TestRunComplete(t *testing.T) {
 		maxErrorsCount := 5
 		err := Run(tasks, workersCount, maxErrorsCount)
 
-		require.Truef(t, errors.Is(err, ErrErrorsLimitExceeded), "actual err - %v", err)
+		require.ErrorIs(t, err, ErrErrorsLimitExceeded, "actual err - %v")
 		require.LessOrEqual(t, runTasksCount, int32(maxErrorsCount*4+workersCount), "not all tasks were completed")
 	})
 }
@@ -149,7 +149,7 @@ func TestZeroWorker(t *testing.T) {
 		maxErrorsCount := 1
 		err := Run(tasks, workersCount, maxErrorsCount)
 
-		require.Truef(t, errors.Is(err, ErrCountWorkersNull), "actual err - %v", err)
+		require.ErrorIs(t, err, ErrCountWorkersNull, "actual err - %v")
 	})
 }
 
