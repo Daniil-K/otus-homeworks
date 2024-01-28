@@ -68,3 +68,111 @@ func TestRun(t *testing.T) {
 		require.LessOrEqual(t, int64(elapsedTime), int64(sumTime/2), "tasks were run sequentially?")
 	})
 }
+
+func TestRunFirstTaskWithError(t *testing.T) {
+	defer goleak.VerifyNone(t)
+	t.Run("many tasks - first error, single worker", func(t *testing.T) {
+		tasksCount := 10
+		tasks := make([]Task, 0, tasksCount)
+		var runTasksCount int32
+		tasks = append(tasks, makeErrorTask(&runTasksCount))
+
+		for i := 0; i < tasksCount; i++ {
+			tasks = append(tasks, makeSuccessTask(&runTasksCount))
+		}
+
+		workersCount := 1
+		maxErrorsCount := 1
+		err := Run(tasks, workersCount, maxErrorsCount)
+
+		require.ErrorIs(t, err, ErrErrorsLimitExceeded, "actual err - %v")
+		require.Equal(t, runTasksCount, int32(1), "not all tasks were completed")
+	})
+
+	t.Run("many tasks - first error, many worker", func(t *testing.T) {
+		tasksCount := 10
+		tasks := make([]Task, 0)
+		var runTasksCount int32
+
+		tasks = append(tasks, makeErrorTask(&runTasksCount))
+		for i := 0; i < tasksCount; i++ {
+			tasks = append(tasks, makeSuccessTask(&runTasksCount))
+		}
+
+		workersCount := 4
+		maxErrorsCount := 1
+		err := Run(tasks, workersCount, maxErrorsCount)
+
+		require.ErrorIs(t, err, ErrErrorsLimitExceeded, "actual err - %v")
+		require.LessOrEqual(t, runTasksCount, int32(1+workersCount*2), "not all tasks were completed")
+	})
+}
+
+func TestRunComplete(t *testing.T) {
+	defer goleak.VerifyNone(t)
+	t.Run("many tasks - many error, many worker", func(t *testing.T) {
+		tasksCount := 40
+		tasks := make([]Task, 0)
+		var runTasksCount int32
+		for i := 0; i < tasksCount; i++ {
+			if i%4 == 0 {
+				tasks = append(tasks, makeErrorTask(&runTasksCount))
+			} else {
+				tasks = append(tasks, makeSuccessTask(&runTasksCount))
+			}
+		}
+
+		workersCount := 4
+		maxErrorsCount := 5
+		err := Run(tasks, workersCount, maxErrorsCount)
+
+		require.ErrorIs(t, err, ErrErrorsLimitExceeded, "actual err - %v")
+		require.LessOrEqual(t, runTasksCount, int32(maxErrorsCount*4+workersCount), "not all tasks were completed")
+	})
+}
+
+func TestZeroWorker(t *testing.T) {
+	defer goleak.VerifyNone(t)
+	t.Run("zero worker", func(t *testing.T) {
+		tasksCount := 5
+		tasks := make([]Task, 0)
+		var runTasksCount int32
+		for i := 0; i < tasksCount; i++ {
+			if i%4 == 0 {
+				tasks = append(tasks, makeErrorTask(&runTasksCount))
+			} else {
+				tasks = append(tasks, makeSuccessTask(&runTasksCount))
+			}
+		}
+
+		workersCount := 0
+		maxErrorsCount := 1
+		err := Run(tasks, workersCount, maxErrorsCount)
+
+		require.ErrorIs(t, err, ErrCountWorkersNull, "actual err - %v")
+	})
+}
+
+func makeSuccessTask(runTasksCount *int32) func() error {
+	taskSleep := time.Millisecond * 10
+
+	f := func() error {
+		time.Sleep(taskSleep)
+		atomic.AddInt32(runTasksCount, 1)
+		return nil
+	}
+
+	return f
+}
+
+func makeErrorTask(runTasksCount *int32) func() error {
+	taskSleep := time.Millisecond * 10
+
+	f := func() error {
+		time.Sleep(taskSleep)
+		atomic.AddInt32(runTasksCount, 1)
+		return errors.New("Bad task here")
+	}
+
+	return f
+}
