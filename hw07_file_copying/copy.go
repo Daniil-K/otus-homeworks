@@ -2,10 +2,15 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"os"
 
 	"github.com/cheggaaa/pb"
+)
+
+const (
+	indexStartOfFile int = 0
 )
 
 var (
@@ -18,7 +23,8 @@ func Copy(fromPath, toPath string, limit, offset int64) error {
 	// Открытие исходного файла для чтения.
 	sourceFile, err := os.Open(fromPath)
 	if err != nil {
-		return ErrUnsupportedFile
+		fmt.Println(err)
+		return err
 	}
 	defer sourceFile.Close()
 
@@ -31,8 +37,8 @@ func Copy(fromPath, toPath string, limit, offset int64) error {
 	if sourceFileSize <= offset {
 		return ErrOffsetExceedsFileSize
 	}
-	if offset > 0 {
-		_, err = sourceFile.Seek(offset, 0)
+	if offset > int64(indexStartOfFile) {
+		_, err = sourceFile.Seek(offset, indexStartOfFile)
 		if err != nil {
 			return err
 		}
@@ -61,5 +67,9 @@ func Copy(fromPath, toPath string, limit, offset int64) error {
 
 	bar.Finish()
 
-	return err
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
