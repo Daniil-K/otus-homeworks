@@ -14,7 +14,7 @@ var (
 )
 
 // Copy копирует исходный файл частично или полностью.
-func Copy(fromPath, toPath string, offset, limit int64) error {
+func Copy(fromPath, toPath string, limit, offset int64) error {
 	// Открытие исходного файла для чтения.
 	sourceFile, err := os.Open(fromPath)
 	if err != nil {

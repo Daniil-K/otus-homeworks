@@ -18,7 +18,7 @@ func TestCopy(t *testing.T) {
 		targetTest := "testdata/out_offset0_limit0.txt"
 		var limit, offset int64
 
-		err = Copy(from, to, offset, limit)
+		err = Copy(from, to, limit, offset)
 		require.NoError(t, err)
 
 		testBytes, err := os.ReadFile(targetTest)
@@ -45,7 +45,7 @@ func TestCopyLimit(t *testing.T) {
 		var limit int64 = 10
 		var offset int64
 
-		err = Copy(from, to, offset, limit)
+		err = Copy(from, to, limit, offset)
 		require.NoError(t, err)
 
 		testBytes, err := os.ReadFile(targetTest)
@@ -68,7 +68,7 @@ func TestCopyLimit(t *testing.T) {
 		var limit int64 = 1000
 		var offset int64
 
-		err = Copy(from, to, offset, limit)
+		err = Copy(from, to, limit, offset)
 		require.NoError(t, err)
 
 		testBytes, err := os.ReadFile(targetTest)
@@ -91,7 +91,7 @@ func TestCopyLimit(t *testing.T) {
 		var limit int64 = 10000
 		var offset int64
 
-		err = Copy(from, to, offset, limit)
+		err = Copy(from, to, limit, offset)
 		require.NoError(t, err)
 
 		testBytes, err := os.ReadFile(targetTest)
@@ -118,7 +118,7 @@ func TestCopyLimitAndOffset(t *testing.T) {
 		var limit int64 = 1000
 		var offset int64 = 100
 
-		err = Copy(from, to, offset, limit)
+		err = Copy(from, to, limit, offset)
 		require.NoError(t, err)
 
 		testBytes, err := os.ReadFile(targetTest)
@@ -141,7 +141,7 @@ func TestCopyLimitAndOffset(t *testing.T) {
 		var limit int64 = 1000
 		var offset int64 = 6000
 
-		err = Copy(from, to, offset, limit)
+		err = Copy(from, to, limit, offset)
 		require.NoError(t, err)
 
 		testBytes, err := os.ReadFile(targetTest)
@@ -166,7 +166,7 @@ func TestCopyError(t *testing.T) {
 		var limit int64
 		var offset int64 = 7000
 
-		err = Copy(from, to, offset, limit)
+		err = Copy(from, to, limit, offset)
 		require.ErrorIs(t, err, ErrOffsetExceedsFileSize, "actual err - %v")
 	})
 
@@ -179,7 +179,7 @@ func TestCopyError(t *testing.T) {
 		var limit int64
 		var offset int64 = 7000
 
-		err = Copy(from, to, offset, limit)
+		err = Copy(from, to, limit, offset)
 		require.ErrorIs(t, err, ErrUnsupportedFile, "actual err - %v")
 	})
 }
