@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"io"
 	"os"
 
@@ -19,7 +18,6 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 	// Открытие исходного файла для чтения.
 	sourceFile, err := os.Open(fromPath)
 	if err != nil {
-		fmt.Println(err)
 		return ErrUnsupportedFile
 	}
 	defer sourceFile.Close()
