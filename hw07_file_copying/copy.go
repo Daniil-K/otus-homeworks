@@ -9,10 +9,6 @@ import (
 	"github.com/cheggaaa/pb"
 )
 
-const (
-	indexStartOfFile int = 0
-)
-
 var (
 	ErrUnsupportedFile       = errors.New("unsupported file")
 	ErrOffsetExceedsFileSize = errors.New("offset exceeds file size")
@@ -37,8 +33,8 @@ func Copy(fromPath, toPath string, limit, offset int64) error {
 	if sourceFileSize <= offset {
 		return ErrOffsetExceedsFileSize
 	}
-	if offset > int64(indexStartOfFile) {
-		_, err = sourceFile.Seek(offset, indexStartOfFile)
+	if offset > int64(io.SeekStart) {
+		_, err = sourceFile.Seek(offset, io.SeekStart)
 		if err != nil {
 			return err
 		}
