@@ -19,7 +19,7 @@ func TestCopy(t *testing.T) {
 		targetTest := "testdata/out_offset0_limit0.txt"
 		var limit, offset int64
 
-		err = Copy(from, to, limit, offset)
+		err = Copy(from, to, offset, limit)
 		require.NoError(t, err)
 
 		testBytes, err := os.ReadFile(targetTest)
@@ -51,7 +51,7 @@ func TestCopyLimit(t *testing.T) {
 			_, err := os.CreateTemp("", tc.to)
 			require.NoError(t, err)
 
-			err = Copy(from, tc.to, tc.limit, tc.offset)
+			err = Copy(from, tc.to, tc.offset, tc.limit)
 			require.NoError(t, err)
 
 			testFile := fmt.Sprintf("%s%s", directory, tc.targetTest)
@@ -84,7 +84,7 @@ func TestCopyLimitAndOffset(t *testing.T) {
 			_, err := os.CreateTemp("", tc.to)
 			require.NoError(t, err)
 
-			err = Copy(from, tc.to, tc.limit, tc.offset)
+			err = Copy(from, tc.to, tc.offset, tc.limit)
 			require.NoError(t, err)
 
 			testFile := fmt.Sprintf("%s%s", directory, tc.targetTest)
@@ -109,7 +109,7 @@ func TestCopyError(t *testing.T) {
 		var limit int64
 		var offset int64 = 7000
 
-		err = Copy(from, to, limit, offset)
+		err = Copy(from, to, offset, limit)
 		require.ErrorIs(t, err, ErrOffsetExceedsFileSize, "actual err - %v")
 	})
 }

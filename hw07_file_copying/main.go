@@ -28,7 +28,7 @@ func main() {
 		log.Fatal("empty -to arg")
 	}
 
-	err := Copy(from, to, limit, offset)
+	err := Copy(from, to, offset, limit)
 	if err != nil {
 		log.Fatal(err)
 	}
