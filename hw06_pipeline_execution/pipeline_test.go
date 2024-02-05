@@ -91,3 +91,99 @@ func TestPipeline(t *testing.T) {
 		require.Less(t, int64(elapsed), int64(abortDur)+int64(fault))
 	})
 }
+
+func TestPipelineNew(t *testing.T) {
+	// Stage generator
+	g := func(_ string, f func(v interface{}) interface{}) Stage {
+		return func(in In) Out {
+			out := make(Bi)
+			go func() {
+				defer close(out)
+				for v := range in {
+					time.Sleep(sleepPerStage)
+					out <- f(v)
+				}
+			}()
+			return out
+		}
+	}
+
+	stages := []Stage{
+		g("Dummy", func(v interface{}) interface{} { return v }),
+		g("Multiplier (* 2)", func(v interface{}) interface{} { return v.(int) * 2 }),
+		g("Multiplier (* 5)", func(v interface{}) interface{} { return v.(int) * 5 }),
+		g("Adder (+ 5)", func(v interface{}) interface{} { return v.(int) + 5 }),
+		g("Multiplier (* 3)", func(v interface{}) interface{} { return v.(int) * 3 }),
+		g("Stringifier", func(v interface{}) interface{} { return strconv.Itoa(v.(int)) }),
+	}
+
+	t.Run("chan not closed", func(t *testing.T) {
+		in := make(Bi)
+		done := make(Bi)
+		data := []int{1, 2, 3, 4, 5}
+
+		abortDur := 1200 * time.Millisecond
+		go func() {
+			<-time.After(abortDur)
+			close(done)
+		}()
+
+		go func() {
+			for _, v := range data {
+				in <- v
+			}
+		}()
+
+		result := make([]string, 0, 10)
+		start := time.Now()
+		for s := range ExecutePipeline(in, done, stages...) {
+			result = append(result, s.(string))
+		}
+		elapsed := time.Since(start)
+		require.Len(t, result, 5)
+		require.Less(t, int64(abortDur), int64(elapsed)+int64(fault))
+		require.Less(t, int64(elapsed), int64(abortDur)+int64(fault))
+	})
+
+	t.Run("empty slice of workers", func(t *testing.T) {
+		in := make(Bi)
+		done := make(Bi)
+		data := []string{"1", "2", "3", "4", "5"}
+
+		go func() {
+			for _, v := range data {
+				in <- v
+			}
+			close(in)
+		}()
+
+		var stages []Stage
+		result := make([]string, 0, 10)
+		for s := range ExecutePipeline(in, done, stages...) {
+			result = append(result, s.(string))
+		}
+		require.Equal(t, result, data)
+	})
+
+	t.Run("empty input", func(t *testing.T) {
+		in := make(Bi)
+		done := make(Bi)
+		var data []string
+
+		go func() {
+			for _, v := range data {
+				in <- v
+			}
+			close(in)
+		}()
+
+		result := make([]string, 0, 10)
+		start := time.Now()
+		for s := range ExecutePipeline(in, done, stages...) {
+			result = append(result, s.(string))
+		}
+		elapsed := time.Since(start)
+		require.Len(t, result, 0)
+		require.Less(t, int64(elapsed), int64(fault))
+	})
+}
