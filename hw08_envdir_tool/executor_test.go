@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"os"
 	"path/filepath"
 	"testing"
@@ -30,9 +29,8 @@ func TestRunCmd(t *testing.T) {
 
 func TestRunCmdErr2(t *testing.T) {
 	err := os.WriteFile("tmp.sh", []byte("#!/bin/bash\nexit 2\n"), 0777) //nolint:gofumpt
-	if err != nil {
-		log.Fatal(err)
-	}
+	require.NoError(t, err)
+
 	defer func() {
 		err := os.Remove("tmp.sh")
 		require.NoError(t, err)
@@ -43,8 +41,7 @@ func TestRunCmdErr2(t *testing.T) {
 }
 
 func TestRunMvCmd(t *testing.T) {
-	tmp, err := os.MkdirTemp("", "temp")
-	require.NoError(t, err)
+	tmp := t.TempDir()
 
 	defer func() {
 		err := os.RemoveAll(tmp)
@@ -53,7 +50,7 @@ func TestRunMvCmd(t *testing.T) {
 
 	nameBefore := filepath.Join(tmp, "tmp")
 	nameAfter := filepath.Join(tmp, "tmp_renamed")
-	err = os.WriteFile(nameBefore, []byte("just some file"), 0777) //nolint:gofumpt
+	err := os.WriteFile(nameBefore, []byte("just some file"), 0777) //nolint:gofumpt
 	require.NoError(t, err)
 
 	code := RunCmd([]string{"mv", nameBefore, nameAfter}, nil)

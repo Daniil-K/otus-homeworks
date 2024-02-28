@@ -61,13 +61,18 @@ func readEnv(file string) (*EnvValue, error) {
 	}
 
 	if len(valueBytes) == 0 {
-		return &EnvValue{"", true}, nil
+		env := EnvValue{
+			Value:      "",
+			NeedRemove: true,
+		}
+		return &env, nil
 	}
 
 	str := string(valueBytes)
 	if strings.Contains(str, "\n") {
 		str = strings.Split(str, "\n")[0]
 	}
+
 	str = strings.ReplaceAll(str, "\x00", "\n")
 	value := strings.TrimRight(strings.TrimRight(str, " "), "\t")
 	env := EnvValue{

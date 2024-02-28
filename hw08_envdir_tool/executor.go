@@ -9,6 +9,10 @@ import (
 
 // RunCmd runs a command + arguments (cmd) with environment variables from env.
 func RunCmd(cmd []string, env Environment) (returnCode int) {
+	if len(cmd) == 0 {
+		return 0
+	}
+
 	for key, value := range env {
 		_ = os.Unsetenv(key)
 		if !value.NeedRemove {
@@ -17,12 +21,12 @@ func RunCmd(cmd []string, env Environment) (returnCode int) {
 			}
 		}
 	}
-	if len(cmd) == 0 {
-		return 0
-	}
+
 	command := exec.Command(cmd[0], cmd[1:]...) //nolint:gosec
+	command.Stdin = os.Stdin
 	command.Stdout = os.Stdout
 	command.Stderr = os.Stderr
+
 	if err := command.Run(); err != nil {
 		var ee *exec.ExitError
 		var e *exec.Error
@@ -33,5 +37,6 @@ func RunCmd(cmd []string, env Environment) (returnCode int) {
 			return 127
 		}
 	}
+
 	return 0
 }
