@@ -58,7 +58,7 @@ func ReadDir(dir string) (Environment, error) {
 func readEnv(file string) (*EnvValue, error) {
 	openFile, err := os.Open(file)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	defer openFile.Close()
 
@@ -78,15 +78,12 @@ func readEnv(file string) (*EnvValue, error) {
 		return &env, nil
 	}
 
-	if strings.Contains(text, "\n") {
-		text = strings.Split(text, "\n")[0]
-	}
-
 	text = strings.ReplaceAll(text, "\x00", "\n")
 	value := strings.TrimRight(strings.TrimRight(text, " "), "\t")
 	env := EnvValue{
 		Value:      value,
 		NeedRemove: false,
 	}
+
 	return &env, nil
 }

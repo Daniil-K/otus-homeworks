@@ -14,13 +14,17 @@ func RunCmd(cmd []string, env Environment) (returnCode int) {
 	}
 
 	command := exec.Command(cmd[0], cmd[1:]...) //nolint:gosec
+	command.Env = os.Environ()
+
 	for key, value := range env {
 		if !value.NeedRemove {
-			command.Env = append(os.Environ(),
-				fmt.Sprintf("%v=%v", key, value.Value),
-			)
+			environ := fmt.Sprintf("%v=%v", key, value.Value)
+			command.Env = append(command.Env, environ)
+		} else {
+			command.Env = append(command.Env, fmt.Sprintf("%v=", key))
 		}
 	}
+
 	command.Stdin = os.Stdin
 	command.Stdout = os.Stdout
 	command.Stderr = os.Stderr
