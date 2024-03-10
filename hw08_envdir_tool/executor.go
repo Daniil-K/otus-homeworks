@@ -2,7 +2,7 @@ package main
 
 import (
 	"errors"
-	"log"
+	"fmt"
 	"os"
 	"os/exec"
 )
@@ -13,16 +13,14 @@ func RunCmd(cmd []string, env Environment) (returnCode int) {
 		return 0
 	}
 
+	command := exec.Command(cmd[0], cmd[1:]...) //nolint:gosec
 	for key, value := range env {
-		_ = os.Unsetenv(key)
 		if !value.NeedRemove {
-			if err := os.Setenv(key, value.Value); err != nil {
-				log.Fatalf("unable to set env %s with value %s", key, value.Value)
-			}
+			command.Env = append(os.Environ(),
+				fmt.Sprintf("%v=%v", key, value.Value),
+			)
 		}
 	}
-
-	command := exec.Command(cmd[0], cmd[1:]...) //nolint:gosec
 	command.Stdin = os.Stdin
 	command.Stdout = os.Stdout
 	command.Stderr = os.Stderr
