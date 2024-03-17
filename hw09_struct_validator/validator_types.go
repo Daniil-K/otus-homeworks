@@ -9,15 +9,17 @@ import (
 	"strings"
 )
 
-var ErrUnknownIntValidator = errors.New("incorrect or unknown validator for integer types")
-var ErrInvalidIntValue = errors.New("invalid int value")
-var ErrInvalidIntMin = errors.New("int value is lesser than limit")
-var ErrInvalidIntMax = errors.New("int value exceeds limit")
-var ErrUnknownStringValidator = errors.New("incorrect or unknown validator for strings")
-var ErrInvalidStringValue = errors.New("invalid string value")
-var ErrInvalidStringRegexp = errors.New("string doesn't match regexp")
-var ErrInvalidStringLength = errors.New("string length exceeds the limit")
-var ErrInvalidSlice = errors.New("invalid slice")
+var (
+	ErrUnknownIntValidator    = errors.New("incorrect or unknown validator for integer types")
+	ErrInvalidIntValue        = errors.New("invalid int value")
+	ErrInvalidIntMin          = errors.New("int value is lesser than limit")
+	ErrInvalidIntMax          = errors.New("int value exceeds limit")
+	ErrUnknownStringValidator = errors.New("incorrect or unknown validator for strings")
+	ErrInvalidStringValue     = errors.New("invalid string value")
+	ErrInvalidStringRegexp    = errors.New("string doesn't match regexp")
+	ErrInvalidStringLength    = errors.New("string length exceeds the limit")
+	ErrInvalidSlice           = errors.New("invalid slice")
+)
 
 func validateString(field reflect.Value, validators string) error {
 	var err error

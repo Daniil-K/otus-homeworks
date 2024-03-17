@@ -6,8 +6,10 @@ import (
 	"reflect"
 )
 
-var ErrNotStruct = errors.New("not a struct")
-var ErrUnsupportedType = errors.New("not supported field type")
+var (
+	ErrNotStruct       = errors.New("not a struct")
+	ErrUnsupportedType = errors.New("not supported field type")
+)
 
 type ValidationError struct {
 	Field string
@@ -68,12 +70,12 @@ func validateFields(v interface{}, currentPath string, errs *ValidationErrors) {
 
 func validate(field reflect.Value, validators string) error {
 	var err error
-	switch field.Kind() {
+	switch field.Kind() { //nolint:exhaustive
 	case reflect.String:
 		err = validateString(field, validators)
 	case reflect.Slice:
 		err = validateSlice(field, validators)
-	case reflect.Int, reflect.Int64, reflect.Int32, reflect.Int16, reflect.Int8, reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+	case reflect.Int, reflect.Int64, reflect.Int32, reflect.Uint, reflect.Uint32, reflect.Uint64:
 		err = validateInt(field, validators)
 	default:
 		return ErrUnsupportedType
